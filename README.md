@@ -1,2 +1,1 @@
-# test-cases
-My repository for test-cases
+# my_qa_portfolio
