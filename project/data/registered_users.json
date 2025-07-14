@@ -1,0 +1,86 @@
+[
+  {
+    "name": "geeta_patel",
+    "gender": "Mrs",
+    "email": "geeta_8374@example.com",
+    "first_name": "Geeta",
+    "last_name": "Patel",
+    "company": "Lotus Tech",
+    "address": "12 Nehru Road",
+    "address2": "Block A",
+    "country": "India",
+    "state": "Maharashtra",
+    "city": "Mumbai",
+    "zipcode": "400001",
+    "mobile": "9812345678",
+    "password": "Geeta#1234",
+    "date": {
+      "day": 4,
+      "month": 3,
+      "year": 1992
+    }
+  },
+  {
+    "name": "liam_brown",
+    "gender": "Mr",
+    "email": "liam_5621@example.com",
+    "first_name": "Liam",
+    "last_name": "Brown",
+    "company": "Brown Solutions",
+    "address": "88 Queen St",
+    "address2": "Level 6",
+    "country": "New Zealand",
+    "state": "Wellington",
+    "city": "Wellington",
+    "zipcode": "6011",
+    "mobile": "0218765432",
+    "password": "LiamSecure@90",
+    "date": {
+      "day": 19,
+      "month": 6,
+      "year": 1989
+    }
+  },
+  {
+    "name": "natalie_cohen",
+    "gender": "Mrs",
+    "email": "natalie_7092@example.com",
+    "first_name": "Natalie",
+    "last_name": "Cohen",
+    "company": "Sabra Systems",
+    "address": "45 Herzl Blvd",
+    "address2": "Unit 5",
+    "country": "Israel",
+    "state": "Tel Aviv District",
+    "city": "Tel Aviv",
+    "zipcode": "61000",
+    "mobile": "0541234567",
+    "password": "Natalie#2025",
+    "date": {
+      "day": 11,
+      "month": 1,
+      "year": 1993
+    }
+  },
+  {
+    "name": "ryan_chen",
+    "gender": "Mr",
+    "email": "ryan_3480@example.com",
+    "first_name": "Ryan",
+    "last_name": "Chen",
+    "company": "Orchid Group",
+    "address": "100 Serangoon Rd",
+    "address2": "Tower B",
+    "country": "Singapore",
+    "state": "Central",
+    "city": "Singapore",
+    "zipcode": "219221",
+    "mobile": "90123456",
+    "password": "RyanChen!88",
+    "date": {
+      "day": 30,
+      "month": 10,
+      "year": 1980
+    }
+  }
+]

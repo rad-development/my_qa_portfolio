@@ -17,11 +17,6 @@ class SignupPage:
         element.clear()
         element.send_keys(value)
 
-    def fill_signup_form(self, user):
-        self.fill_input(By.XPATH, '//input[@data-qa="signup-name"]', user["name"])
-        self.fill_input(By.XPATH, '//input[@data-qa="signup-email"]', user["email"])
-        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-qa="signup-button"]'))).click()
-
     def fill_account_info(self, user):
         self.wait.until(EC.presence_of_element_located((By.ID, "first_name")))
         self.fill_input(By.ID, "first_name", user["first_name"])
@@ -51,12 +46,17 @@ class SignupPage:
         Select(country_dropdown).select_by_visible_text(user["country"])
 
     def submit_account(self):
-        self.driver.find_element(By.XPATH, '//button[@data-qa="create-account"]').click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//button[@data-qa="create-account"]'))).click()
 
     def click_continue(self):
-        self.driver.find_element(By.XPATH, '//a[@data-qa="continue-button"]').click()
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, '//a[@data-qa="continue-button"]'))).click()
 
     def delete_account(self):
         self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Delete Account"))).click()
+    
+    def logout(self):
+        self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Logout"))).click()
 
+    def go_to_home_page(self):
+        self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Home"))).click()
 

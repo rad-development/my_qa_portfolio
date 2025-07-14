@@ -1,0 +1,65 @@
+[
+  {
+    "name": "emily_davis",
+    "gender": "Mrs",
+    "email": "emily_9254@example.com",
+    "first_name": "Emily",
+    "last_name": "Davis",
+    "company": "Sunrise Corp",
+    "address": "200 George St",
+    "address2": "Suite 12",
+    "country": "Australia",
+    "state": "New South Wales",
+    "city": "Sydney",
+    "zipcode": "2000",
+    "mobile": "0412345678",
+    "password": "Emily@2024",
+    "date": {
+      "day": 7,
+      "month": 5,
+      "year": 1990
+    }
+  },
+  {
+    "name": "arjun_mehta",
+    "gender": "Mr",
+    "email": "arjun_6132@example.com",
+    "first_name": "Arjun",
+    "last_name": "Mehta",
+    "company": "NextGen Systems",
+    "address": "14 MG Road",
+    "address2": "2nd Floor",
+    "country": "India",
+    "state": "Karnataka",
+    "city": "Bangalore",
+    "zipcode": "560001",
+    "mobile": "9876543210",
+    "password": "Arjun#Mehta99",
+    "date": {
+      "day": 23,
+      "month": 9,
+      "year": 1988
+    }
+  },
+  {
+    "name": "sophia_wilson",
+    "gender": "Mrs",
+    "email": "sophia_4783@example.com",
+    "first_name": "Sophia",
+    "last_name": "Wilson",
+    "company": "BluePeak Ltd",
+    "address": "500 Bay St",
+    "address2": "Unit 18A",
+    "country": "Canada",
+    "state": "Ontario",
+    "city": "Toronto",
+    "zipcode": "M5G 2C8",
+    "mobile": "6471234567",
+    "password": "Sophia!2023",
+    "date": {
+      "day": 15,
+      "month": 12,
+      "year": 1991
+    }
+  }
+]

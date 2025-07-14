@@ -6,6 +6,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from pages.login_page import LoginPage
 from pages.signup_page import SignupPage
 
 # Функция для генерации паролей
@@ -38,8 +39,9 @@ def test_signup_flow(driver, user):
     # Проверить, что текст "New User Signup!" присутствует
     signup_heading = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[text()='New User Signup!']")))
     assert signup_heading.is_displayed(), "New User Signup! heading is not visible"
-
-    signup.fill_signup_form(user)
+    
+    login = LoginPage(driver)
+    login.fill_signup_form(user)
 
     # Проверить, что текст "Enter Account Information" присутствует
     verify_enter_info_text = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2//b[text()='Enter Account Information']")))
