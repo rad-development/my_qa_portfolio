@@ -6,6 +6,7 @@ import time
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
+from pages.home_page import HomePage
 from pages.login_page import LoginPage
 from pages.signup_page import SignupPage
 
@@ -27,14 +28,15 @@ def load_users():
 @pytest.mark.parametrize("user", load_users())
 def test_signup_flow(driver, user):
     wait = WebDriverWait(driver, 10)
-    driver.get("https://automationexercise.com/")
+    
+    home = HomePage(driver)
+    home.open_website()
 
     # Проверить, что логотип присутствует
     logo = driver.find_element(By.CSS_SELECTOR, "div.logo.pull-left img")
     assert logo.is_displayed() or logo.get_attribute("src"), "Logo image is not present"
 
-    signup = SignupPage(driver)
-    signup.go_to_signup()
+    home.go_to_signup()
 
     # Проверить, что текст "New User Signup!" присутствует
     signup_heading = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[text()='New User Signup!']")))
@@ -46,7 +48,8 @@ def test_signup_flow(driver, user):
     # Проверить, что текст "Enter Account Information" присутствует
     verify_enter_info_text = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2//b[text()='Enter Account Information']")))
     assert "enter account information" in verify_enter_info_text.text.strip().lower(), "Enter Account Information is not visible or incorrect"
-
+    
+    signup = SignupPage(driver)
     signup.fill_account_info(user)
     signup.submit_account()
 
@@ -60,10 +63,14 @@ def test_signup_flow(driver, user):
     logged_in_text = wait.until(EC.visibility_of_element_located((By.XPATH, f"//li/a[contains(text(),'Logged in as')]/b[text()='{user['name']}']")))
     assert logged_in_text.text == user['name'], f"Logged in username is not correct, expected {user['name']}"
 
-    signup.delete_account()
+    home.delete_account()
 
     # Проверить, что текст "ACCOUNT DELETED!" присутствует
     verify_deleted_text = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2//b[text()='Account Deleted!']")))
     assert "account deleted!" in verify_deleted_text.text.strip().lower(), "Account Deleted! is not visible or incorrect"
 
     signup.click_continue()
+    
+    # Проверка, что кнопка "Signup / Login" снова видна после logout
+    login_button = wait.until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Signup / Login')]")))
+    assert login_button.is_displayed(), "Logout failed — Signup/Login button not visible"

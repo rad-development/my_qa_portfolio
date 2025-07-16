@@ -7,10 +7,6 @@ class LoginPage:
         self.driver = driver
         self.wait = WebDriverWait(driver, 10)
 
-    def go_to_signup(self):
-        self.driver.get("https://automationexercise.com/")
-        self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Signup / Login"))).click()
-
     def fill_input(self, by, locator, value):
         element = self.wait.until(EC.element_to_be_clickable((by, locator)))
         element.clear()

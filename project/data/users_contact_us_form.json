@@ -1,0 +1,23 @@
+[
+  {
+    "name": "geeta_patel",
+    "email": "geeta_8374@example.com",
+    "subject": "Order not received",
+    "message": "I placed an order two weeks ago and it hasn't arrived.",
+    "file_path": "C:\\Users\\Radmir\\project\\data\\files\\geeta_file.txt"
+  },
+  {
+    "name": "liam_brown",
+    "email": "liam_5621@example.com",
+    "subject": "Account issue",
+    "message": "I'm unable to log into my account. Please help.",
+    "file_path": "C:\\Users\\Radmir\\project\\data\\files\\liam_file.txt"
+  },
+  {
+    "name": "natalie_cohen",
+    "email": "natalie_7092@example.com",
+    "subject": "Feedback",
+    "message": "Great service! Just wanted to leave a thank you.",
+    "file_path": "C:\\Users\\Radmir\\project\\data\\files\\natalie_file.txt"
+  }
+]
