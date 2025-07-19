@@ -12,7 +12,13 @@ class HomePage:
 
     def go_to_signup(self):
         self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Signup / Login"))).click()
+    
+    def go_to_test_cases(self):
+        self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Test Cases"))).click()
 
+    def go_to_products(self):
+        self.wait.until(EC.element_to_be_clickable((By.XPATH, "//li/a[contains(., 'Products')]"))).click()
+         
     def go_to_contact_us(self):
         self.wait.until(EC.element_to_be_clickable((By.LINK_TEXT, "Contact us"))).click()
 

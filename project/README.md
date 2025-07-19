@@ -60,6 +60,7 @@ project/
 │   └── login_page.py               # Page Object модель для страницы входа
 │   └── home_page.py                # Page Object модель для главной страницы 
 │   └── contact_us_page.py          # Page Object модель для страницы "Обратная связь"
+│   └── products_page.py            # Page Object модель для страницы товаров
 │
 ├── data/
 │   ├── registered_users.json       # Данные зарегистрированных пользователей
@@ -77,6 +78,8 @@ project/
 │   └── test_failed_login.py        # Тест-кейс на вход с неправильным email и паролем
 │   └── test_failed_signup.py       # Тест-кейс регистрации с существующим email
 │   └── test_contact_us.py          # Тест-кейс формы "Обратная связь"
+│   └── test_cases_page_test.py     # Тест-кейс: Проверка страницы с тест-кейсами
+│   └── test_products_page.py       # Тест-кейс: Проверка страницы товаров
 │
 ├── conftest.py                     # Общие фикстуры и настройки окружения
 ├── requirements.txt                # Список зависимостей
