@@ -17,3 +17,6 @@ class ProductsPage:
     def click_first_product_view(self, products):
         first_view_button = products[0].find_element(By.LINK_TEXT, "View Product")
         first_view_button.click()
+    
+    def click_confirm_button(self):
+        self.wait.until(EC.element_to_be_clickable((By.ID, "submit_search"))).click()
