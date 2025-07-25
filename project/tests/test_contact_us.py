@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_CONTACT_001 — Отправка формы "Contact Us"
+# Расположение ручного теста: test-cases/manual-automated/TC_CONTACT_001_contact-us-form.md
+
 import json
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait

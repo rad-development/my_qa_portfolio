@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_SIGNUP_002 — Попытка регистрации с уже зарегистрированным email
+# Расположение ручного теста: test-cases/manual-automated/TC_SIGNUP_002_existing-email.md
+
 import json
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait

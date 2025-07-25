@@ -8,7 +8,7 @@
 
 **Приоритет:** Средний
 
-**Связанный автотест:** `project/tests/test_contact_us.py`
+**Связанный автотест:** [project/tests/test_contact_us.py](project/tests/test_contact_us.py)
 
 ---
 

@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_PRODUCTS_002 — Проверка поиска товаров по имени на странице Products
+# Расположение ручного теста: test-cases/manual-automated/TC_PRODUCTS_002_search-functionality.md
+
 import pytest
 import json
 from selenium.webdriver.support.ui import WebDriverWait

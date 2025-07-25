@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_NAV_001 — Навигация на страницу Test Cases с главной страницы
+# Расположение ручного теста: test-cases/manual-automated/TC_NAV_001_test-cases-page-navigation.md
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC

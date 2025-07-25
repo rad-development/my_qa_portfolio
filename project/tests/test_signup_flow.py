@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_SIGNUP_001 — Проверка успешной регистрации нового пользователя
+# Расположение ручного теста: test-cases/manual-automated/TC_SIGNUP_001_register-user-flow.md
+
 import json
 import random
 import string

@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_LOGIN_001 — Вход пользователя с корректным email и паролем
+# Расположение ручного теста: test-cases/manual-automated/TC_LOGIN_002_valid-login.md
+
 import json
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait

@@ -8,7 +8,7 @@
 
 **Приоритет:** Высокий
 
-**Связанный автотест:** `project/tests/test_signup_flow.py`
+**Связанный автотест:** [project/tests/test_signup_flow.py](project/tests/test_signup_flow.py)
 
 ---
 

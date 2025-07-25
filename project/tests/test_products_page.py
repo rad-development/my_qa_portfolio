@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_PRODUCTS_001 — Проверка страницы товаров и деталей товара
+# Расположение ручного теста: test-cases/manual-automated/TC_PRODUCTS_001_product-details.md
+
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC

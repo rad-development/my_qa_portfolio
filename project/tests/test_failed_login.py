@@ -1,3 +1,7 @@
+# ⬇ Связь с ручным тест-кейсом
+# Тест-кейс: TC_LOGIN_003 — Вход пользователя с некорректным email и паролем
+# Расположение ручного теста: test-cases/manual-automated/TC_LOGIN_003_invalid-credentials.md
+
 import json
 import pytest
 from selenium.webdriver.support.ui import WebDriverWait

@@ -8,7 +8,7 @@
 
 **Приоритет:** Средний
 
-**Связанный автотест:** `project/tests/test_failed_signup.py`
+**Связанный автотест:** [project/tests/test_failed_signup.py](project/tests/test_failed_signup.py)
 
 ---
 
