@@ -1,3 +1,5 @@
+import pytest
+import json
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -5,7 +7,13 @@ from pages.home_page import HomePage
 from pages.signup_page import SignupPage
 from pages.products_page import ProductsPage
 
-def test_product_search(driver):
+# Загрузка данных из JSON
+def load_product_queries():
+    with open("data/product_search.json", encoding="utf-8") as f:
+        return json.load(f)
+    
+@pytest.mark.parametrize("search_data", load_product_queries())
+def test_product_search(driver, search_data):
     wait = WebDriverWait(driver, 10)
 
     home = HomePage(driver)
@@ -21,9 +29,10 @@ def test_product_search(driver):
     products_heading = wait.until(EC.visibility_of_element_located((By.XPATH, "//h2[text()='All Products']")))
     assert products_heading.is_displayed(), "All Products heading is not visible"
 
-    # Поиск товаров по запросу "Dress"
+    # Поиск товара по запросу из JSON
+    search_query = search_data["query"]
     signup_page = SignupPage(driver)
-    signup_page.fill_input(By.ID, "search_product", "Dress")
+    signup_page.fill_input(By.ID, "search_product", search_query)
 
     product_page = ProductsPage(driver)
     product_page.click_confirm_button()
@@ -36,8 +45,5 @@ def test_product_search(driver):
 
     # Получаем список товаров
     products = product_page.get_all_products() 
-    assert len(products) > 0, "Список продуктов пуст"
-    print("Количество найденных товаров по запросу Dress =",len(products))
-
- 
-
+    print(f"Количество найденных товаров по запросу '{search_query}':", len(products))
+    assert len(products) > 0, "Список товаров пуст"
