@@ -65,4 +65,4 @@
 
 - Баг воспроизводится стабильно при вводе любых случайных символов, не содержащих валидных слов или артикулов  
 - Возможная причина: запрос не обрабатывается и интерпретируется как пустой  
-- Найден при выполнении тест-кейса: [/project/test-cases/manual-only/TC_SEARCH_001_random-query-search.md](/project/test-cases/manual-only/TC_SEARCH_001_random-query-search.md)  
+- Найден при выполнении тест-кейса: [/test-cases/manual-only/TC_SEARCH_001_random-query-search.md](/test-cases/manual-only/TC_SEARCH_001_random-query-search.md)  

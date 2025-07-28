@@ -62,5 +62,5 @@
 
 ### 💬 Дополнительные примечания
 
-- Найден при выполнении тест-кейса: [/project/test-cases/manual-only/TC_COMPARE_001_compare-products.md](/project/test-cases/manual-only/TC_COMPARE_001_compare-products.md)  
+- Найден при выполнении тест-кейса: [/test-cases/manual-only/TC_COMPARE_001_compare-products.md](/test-cases/manual-only/TC_COMPARE_001_compare-products.md)  
 - Проблема стабильно воспроизводится с разными товарами  

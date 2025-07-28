@@ -62,5 +62,5 @@
 
 ### 💬 Дополнительные примечания
 
-- Найден при выполнении тест-кейса: [/project/test-cases/manual-only/TC_CART_001_add-to-cart-and-navigate.md](/project/test-cases/manual-only/TC_CART_001_add-to-cart-and-navigate.md)  
+- Найден при выполнении тест-кейса: [/test-cases/manual-only/TC_CART_001_add-to-cart-and-navigate.md](/test-cases/manual-only/TC_CART_001_add-to-cart-and-navigate.md)  
 - Проблема воспроизводится стабильно при добавлении любого товара из раздела Featured products  

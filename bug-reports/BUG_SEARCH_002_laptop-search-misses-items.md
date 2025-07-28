@@ -66,4 +66,4 @@
 
 - Проблема воспроизводится стабильно  
 - Возможно, поиск работает только по названию, без учёта категории, описания или ключевых слов  
-- Найден при выполнении тест-кейса: [/project/test-cases/manual-only/TC_SEARCH_002_laptop-search.md](/project/test-cases/manual-only/TC_SEARCH_002_laptop-search.md)  
+- Найден при выполнении тест-кейса: [/test-cases/manual-only/TC_SEARCH_002_laptop-search.md](/test-cases/manual-only/TC_SEARCH_002_laptop-search.md)  

@@ -67,5 +67,5 @@
 
 ### 💬 Дополнительные примечания
 
-- Найден при выполнении тест-кейса: [/project/test-cases/manual-only/TC_NEWS_001_add-news-comment.md](/project/test-cases/manual-only/TC_NEWS_001_add-news-comment.md)  
+- Найден при выполнении тест-кейса: [/test-cases/manual-only/TC_NEWS_001_add-news-comment.md](/test-cases/manual-only/TC_NEWS_001_add-news-comment.md)  
 - Баг стабильно воспроизводится при повторных попытках комментирования  
