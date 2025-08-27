@@ -1,0 +1,2862 @@
+{
+	"info": {
+		"_postman_id": "b6889b9e-13bb-409d-b5e0-a1903442af9d",
+		"name": "QA Portfolio: DummyJSON API Tests (Postman)",
+		"description": "Данная коллекция предназначена для отработки навыков тестирования API с использованием Postman.  \nВ качестве тестируемого сервиса используется [DummyJSON API](https://dummyjson.com/) — публичный RESTful API для демонстрационных целей.\n\n### Цели\n\n- Практика написания позитивных и негативных тестов.\n    \n- Использование переменных окружения и pre-request скриптов.\n    \n- Валидация структуры и данных ответов с помощью встроенных тестов.\n    \n\n### Структура коллекции\n\n- **Auth** — авторизация, обновление токена, проверка текущего пользователя.\n    \n- **Posts** — получение постов и пагинация.\n    \n- **Products** — CRUD-операции с товарами и тесты пагинации.\n    \n- **Users** — поиск, фильтрация и постраничный вывод пользователей.\n    \n- **Цепочки операций** (Create → Update → Delete) — сценарии, где последовательно выполняются:  \n    • добавление нового продукта (Add new product),  \n    • получение продукта по ID (Get product by id),  \n    • обновление продукта (Update product),  \n    • удаление продукта (Delete product),  \n    • проверка удалённого продукта (Get deleted product by id).\n    \n\n### Особенности\n\n- Переменные окружения для базового URL, токенов и параметров.\n    \n- Скрипты `Pre-request` для установки параметров.\n    \n- Скрипты `Post-response` для валидации данных, структуры и статусов ответов.\n    \n- Позитивные и негативные кейсы для ключевых эндпоинтов.\n    \n\n### Глобальные скрипты\n\nВ коллекцию добавлены глобальные проверки для всех запросов:  \n• Проверка, что сервер вернул ответ с заголовком Content-Type: application/json (т.е. ожидаемый формат: JSON).  \n• Время ответа < 2 секунд — проверяет, что API отвечает быстро и задержка не превышает 2 секунд.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "47245494",
+		"_collection_link": "https://radmir101-2090307.postman.co/workspace/radmir's-Workspace~8f80a8e1-80dd-4e5c-81bd-d6345b6e2299/collection/47245494-b6889b9e-13bb-409d-b5e0-a1903442af9d?action=share&source=collection_link&creator=47245494"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login - Valid Credentials (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа HTTP равен 200 (успешный запрос)\r",
+									"pm.test(\"Код статуса равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Получаем JSON-ответ\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Сохраняем токены в окружение\r",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);\r",
+									"pm.environment.set(\"refreshToken\", jsonData.refreshToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"emilyspass\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Аутентификация пользователя. Отправляет username и password в теле запроса.  \nОжидаемый ответ: HTTP 200, JSON с accessToken, refreshToken и данными пользователя.  \nТокены: Сохраняются в окружении для последующих запросов.  \nТест: Проверка кода ответа 200."
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Invalid Password (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа HTTP равен 400 (ошибка клиента)\r",
+									"pm.test(\"Код статуса равен 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе содержится сообщение 'Invalid credentials'\r",
+									"pm.test(\"В ответе содержится сообщение 'Неверные учетные данные'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"message\", \"Invalid credentials\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"emilysp33ass\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Аутентификация пользователя с некорректным паролем.  \nОтправляет username и неправильный password в теле запроса.  \nОжидаемый ответ: HTTP 400 с сообщением \"Invalid credentials\".  \nТесты: проверка кода ответа 400 и наличия сообщения об ошибке."
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Missing Password (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа равен 400 (ошибка клиента)\r",
+									"pm.test(\"Код статуса равен 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть сообщение \"Username and password required\"\r",
+									"pm.test(\"В ответе содержится сообщение 'Username and password required'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"message\", \"Username and password required\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"emilys\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Аутентификация пользователя без указания пароля.  \nОтправляет только username в теле запроса.  \nОжидаемый ответ: HTTP 400 с сообщением \"Username and password required\".  \nТесты: проверка кода ответа 400 и наличия сообщения об ошибке."
+					},
+					"response": []
+				},
+				{
+					"name": "Login - Empty Password (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа равен 400 (ошибка клиента)\r",
+									"pm.test(\"Код статуса равен 400\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть сообщение \"Username and password required\"\r",
+									"pm.test(\"В ответе содержится сообщение 'Username and password required'\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"message\", \"Username and password required\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"username\": \"emilys\",\r\n  \"password\": \"\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Аутентификация пользователя с пустым паролем.  \nОтправляет username и пустой password в теле запроса.  \nОжидаемый ответ: HTTP 400 с сообщением \"Username and password required\".  \nТесты: проверка кода ответа 400 и наличия сообщения об ошибке."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Current Authenticated User  (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверка кода ответа 200\r",
+									"pm.test(\"Статус ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверка, что ответ — JSON объект\r",
+									"pm.test(\"Ответ — JSON объект\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"// Парсим тело ответа\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// JSON Schema для ответа\r",
+									"const schema = {\r",
+									"    type: \"object\",\r",
+									"    required: [\r",
+									"        \"id\", \"firstName\", \"lastName\", \"maidenName\", \"age\", \"gender\",\r",
+									"        \"email\", \"phone\", \"username\", \"password\", \"birthDate\", \"image\",\r",
+									"        \"bloodGroup\", \"height\", \"weight\", \"eyeColor\", \"hair\", \"ip\",\r",
+									"        \"address\", \"macAddress\", \"university\", \"bank\", \"company\",\r",
+									"        \"ein\", \"ssn\", \"userAgent\", \"crypto\", \"role\"\r",
+									"    ],\r",
+									"    properties: {\r",
+									"        id: { type: \"number\" },\r",
+									"        firstName: { type: \"string\" },\r",
+									"        lastName: { type: \"string\" },\r",
+									"        maidenName: { type: \"string\" },\r",
+									"        age: { type: \"number\" },\r",
+									"        gender: { type: \"string\" },\r",
+									"        email: { type: \"string\", format: \"email\" },\r",
+									"        phone: { type: \"string\" },\r",
+									"        username: { type: \"string\" },\r",
+									"        password: { type: \"string\" },\r",
+									"        birthDate: { type: \"string\" },\r",
+									"        image: { type: \"string\" },\r",
+									"        bloodGroup: { type: \"string\" },\r",
+									"        height: { type: \"number\" },\r",
+									"        weight: { type: \"number\" },\r",
+									"        eyeColor: { type: \"string\" },\r",
+									"        hair: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"color\", \"type\"],\r",
+									"            properties: {\r",
+									"                color: { type: \"string\" },\r",
+									"                type: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        ip: { type: \"string\" },\r",
+									"        address: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"address\", \"city\", \"state\", \"stateCode\", \"postalCode\", \"coordinates\", \"country\"],\r",
+									"            properties: {\r",
+									"                address: { type: \"string\" },\r",
+									"                city: { type: \"string\" },\r",
+									"                state: { type: \"string\" },\r",
+									"                stateCode: { type: \"string\" },\r",
+									"                postalCode: { type: \"string\" },\r",
+									"                coordinates: {\r",
+									"                    type: \"object\",\r",
+									"                    required: [\"lat\", \"lng\"],\r",
+									"                    properties: {\r",
+									"                        lat: { type: \"number\" },\r",
+									"                        lng: { type: \"number\" }\r",
+									"                    }\r",
+									"                },\r",
+									"                country: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        macAddress: { type: \"string\" },\r",
+									"        university: { type: \"string\" },\r",
+									"        bank: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"cardExpire\", \"cardNumber\", \"cardType\", \"currency\", \"iban\"],\r",
+									"            properties: {\r",
+									"                cardExpire: { type: \"string\" },\r",
+									"                cardNumber: { type: \"string\" },\r",
+									"                cardType: { type: \"string\" },\r",
+									"                currency: { type: \"string\" },\r",
+									"                iban: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        company: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"department\", \"name\", \"title\", \"address\"],\r",
+									"            properties: {\r",
+									"                department: { type: \"string\" },\r",
+									"                name: { type: \"string\" },\r",
+									"                title: { type: \"string\" },\r",
+									"                address: {\r",
+									"                    type: \"object\",\r",
+									"                    required: [\"address\", \"city\", \"state\", \"stateCode\", \"postalCode\", \"coordinates\", \"country\"],\r",
+									"                    properties: {\r",
+									"                        address: { type: \"string\" },\r",
+									"                        city: { type: \"string\" },\r",
+									"                        state: { type: \"string\" },\r",
+									"                        stateCode: { type: \"string\" },\r",
+									"                        postalCode: { type: \"string\" },\r",
+									"                        coordinates: {\r",
+									"                            type: \"object\",\r",
+									"                            required: [\"lat\", \"lng\"],\r",
+									"                            properties: {\r",
+									"                                lat: { type: \"number\" },\r",
+									"                                lng: { type: \"number\" }\r",
+									"                            }\r",
+									"                        },\r",
+									"                        country: { type: \"string\" }\r",
+									"                    }\r",
+									"                }\r",
+									"            }\r",
+									"        },\r",
+									"        ein: { type: \"string\" },\r",
+									"        ssn: { type: \"string\" },\r",
+									"        userAgent: { type: \"string\" },\r",
+									"        crypto: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"coin\", \"wallet\", \"network\"],\r",
+									"            properties: {\r",
+									"                coin: { type: \"string\" },\r",
+									"                wallet: { type: \"string\" },\r",
+									"                network: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        role: { type: \"string\" }\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"// Валидация JSON Schema\r",
+									"pm.test(\"Ответ соответствует JSON Schema\", function () {\r",
+									"    pm.expect(tv4.validate(jsonData, schema), tv4.error).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Логические проверки\r",
+									"pm.test(\"Роль пользователя — admin\", function () {\r",
+									"    pm.expect(jsonData.role).to.eql(\"admin\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Возраст пользователя больше 18\", function () {\r",
+									"    pm.expect(jsonData.age).to.be.above(18);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Email содержит @\", function () {\r",
+									"    pm.expect(jsonData.email).to.include(\"@\");\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\tBearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/auth/me",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"me"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения данных текущего аутентифицированного пользователя. Запрос выполняется методом GET к эндпоинту /auth/me, который возвращает полную информацию о пользователе.\n\nЧто проверяется:\n\nКод ответа: Проверяется, что сервер возвращает статус 200, что подтверждает успешное выполнение запроса.\n\nФормат ответа: Проверяется, что ответ приходит в формате JSON.\n\nСтруктура данных (JSON Schema): Валидируется, что все обязательные поля присутствуют в ответе (например, id, firstName, lastName, email, role и др.) и имеют правильный тип данных.\n\nЛогические проверки:\n\nРоль пользователя должна быть \"admin\".\n\nВозраст пользователя больше 18 лет.\n\nEmail содержит символ @."
+					},
+					"response": []
+				},
+				{
+					"name": "Auth - Refresh Token (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа HTTP равен 200\r",
+									"pm.test(\"Код статуса равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть accessToken и он не пустой\r",
+									"pm.test(\"В ответе есть accessToken\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.accessToken).to.be.a('string').and.not.empty;\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть refreshToken и он не пустой\r",
+									"pm.test(\"В ответе есть refreshToken\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.refreshToken).to.be.a('string').and.not.empty;\r",
+									"});\r",
+									"\r",
+									"// Сохраняем токены в переменные окружения для последующего использования\r",
+									"let jsonData = pm.response.json();\r",
+									"pm.environment.set(\"accessToken\", jsonData.accessToken);\r",
+									"pm.environment.set(\"refreshToken\", jsonData.refreshToken);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"refreshToken\": \"{{refreshToken}}\",\r\n  \"expiresInMins\": 30\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/auth/refresh",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"auth",
+								"refresh"
+							]
+						},
+						"description": "Этот тест проверяет корректность обновления токенов аутентификации. Запрос выполняется методом POST к эндпоинту /auth/refresh с передачей текущего refreshToken и времени жизни нового токена.\n\nЧто проверяется:\n\nКод ответа: Проверяется, что сервер возвращает статус 200, что подтверждает успешное выполнение запроса.\n\nФормат и наличие данных: Проверяется, что в ответе присутствуют поля accessToken и refreshToken, и они не пустые.\n\nСохранение токенов: Новые токены сохраняются в переменные окружения для последующего использования в других запросах.\n\nЦель теста — убедиться, что механизм обновления токенов работает корректно и клиент получает новые действительные токены."
+					},
+					"response": []
+				}
+			],
+			"description": "Тестирование авторизации и управления сессиями.\n\nСодержит позитивные и негативные кейсы логина, проверку получения данных текущего авторизованного пользователя и обновления токена (refresh token)."
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "Get All Posts (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа равен 200 (успешный запрос)\r",
+									"pm.test(\"Код статуса равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть свойство 'posts' и оно является массивом\r",
+									"pm.test(\"В ответе есть массив 'posts'\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"posts\");\r",
+									"    pm.expect(jsonData.posts).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в массиве 'posts' ровно 30 элементов\r",
+									"pm.test(\"В массиве 'posts' 30 элементов\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.posts.length).to.eql(30);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что каждый пост содержит ожидаемые поля: id, title, body, tags, reactions, views, userId\r",
+									"pm.test(\"Каждый пост содержит ожидаемые поля\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    jsonData.posts.forEach(post => {\r",
+									"        pm.expect(post).to.have.property(\"id\");\r",
+									"        pm.expect(post).to.have.property(\"title\");\r",
+									"        pm.expect(post).to.have.property(\"body\");\r",
+									"        pm.expect(post).to.have.property(\"tags\");\r",
+									"        pm.expect(post).to.have.property(\"reactions\");\r",
+									"        pm.expect(post).to.have.property(\"views\");\r",
+									"        pm.expect(post).to.have.property(\"userId\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что 'tags' — это массив, а 'reactions' — объект с полями 'likes' и 'dislikes'\r",
+									"pm.test(\"Теги — массив, а реакции содержат 'likes' и 'dislikes'\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    jsonData.posts.forEach(post => {\r",
+									"        pm.expect(post.tags).to.be.an(\"array\");\r",
+									"        pm.expect(post.reactions).to.be.an(\"object\");\r",
+									"        pm.expect(post.reactions).to.have.property(\"likes\");\r",
+									"        pm.expect(post.reactions).to.have.property(\"dislikes\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ID постов уникальны (нет повторяющихся)\r",
+									"pm.test(\"ID постов уникальны\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let ids = jsonData.posts.map(p => p.id);\r",
+									"    let uniqueIds = new Set(ids);\r",
+									"    pm.expect(uniqueIds.size).to.eql(ids.length);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/posts",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"posts"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка всех постов. Он убеждается, что сервер возвращает успешный ответ и что данные приходят в виде массива с стандартным количеством постов (30).\n\nЧто проверяется:\n\n- **Код ответа:** Сервер возвращает статус 200, что подтверждает успешное выполнение запроса.\n    \n- **Формат ответа:** Ответ приходит в формате JSON.\n    \n- **Структура данных:**\n    \n    - В ответе есть свойство `posts`, которое является массивом.\n        \n    - Массив `posts` содержит 30 элементов по умолчанию.\n        \n    - Каждый пост содержит обязательные поля: `id`, `title`, `body`, `tags`, `reactions`, `views`, `userId`.\n        \n    - Поле `tags` является массивом, поле `reactions` — объект с полями `likes` и `dislikes`.\n        \n    - ID постов уникальны, повторяющихся значений нет."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by id (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем значение postId из окружения\r",
+									"const expectedPostId = parseInt(pm.environment.get(\"postId\"));\r",
+									"\r",
+									"// Получаем тело ответа в формате JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что статус ответа 200 OK\r",
+									"pm.test(\"Код статуса равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что id совпадает с переменной окружения\r",
+									"pm.test(`Ответ содержит объект поста с id = ${expectedPostId}`, function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"id\", expectedPostId);\r",
+									"});\r",
+									"\r",
+									"// JSON Schema для полной проверки\r",
+									"const postSchema = {\r",
+									"    type: \"object\",\r",
+									"    required: [\"id\", \"title\", \"body\", \"tags\", \"reactions\", \"views\", \"userId\"],\r",
+									"    properties: {\r",
+									"        id: { type: \"integer\" },\r",
+									"        title: { type: \"string\" },\r",
+									"        body: { type: \"string\" },\r",
+									"        tags: { type: \"array\", items: { type: \"string\" } },\r",
+									"        reactions: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"likes\", \"dislikes\"],\r",
+									"            properties: {\r",
+									"                likes: { type: \"number\" },\r",
+									"                dislikes: { type: \"number\" }\r",
+									"            }\r",
+									"        },\r",
+									"        views: { type: \"number\" },\r",
+									"        userId: { type: \"number\" }\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"// Тест: Проверяем соответствие JSON-схеме\r",
+									"pm.test(\"Ответ соответствует JSON-схеме\", function () {\r",
+									"    pm.response.to.have.jsonSchema(postSchema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Генерируем случайный ID продукта от 1 до 251\r",
+									"const randomId = Math.floor(Math.random() * 251) + 1;\r",
+									"pm.environment.set(\"postId\", randomId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/posts/{{postId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения одного поста по его ID. Запрос возвращает случайный пост, который соответствует установленной JSON-схеме.\n\nЧто проверяется:\n\n- Код ответа: сервер возвращает статус 200.\n    \n- Структура данных: объект поста содержит обязательные поля: id, title, body, tags, reactions, views, userId.\n    \n- Проверяется соответствие ID поста запрошенному значению."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by id - Non-existent ID (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем тело ответа в формате JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код ответа не 200 (ожидаем 404)\r",
+									"pm.test(\"Код статуса равен 404 Not Found\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что ответ содержит объект с сообщением об ошибке\r",
+									"pm.test(\"Ответ содержит сообщение об ошибке\", function () {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData).to.have.property(\"message\").that.is.a(\"string\");\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что в сообщении упоминается, что пост не найден\r",
+									"pm.test(\"Сообщение указывает, что пост не найден\", function () {\r",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include(\"not found\");\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что в ответе нет данных о посте (id, title, body и т.п.)\r",
+									"pm.test(\"В ответе отсутствуют данные поста\", function () {\r",
+									"    pm.expect(jsonData).to.not.have.property(\"id\");\r",
+									"    pm.expect(jsonData).to.not.have.property(\"title\");\r",
+									"    pm.expect(jsonData).to.not.have.property(\"body\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную окружения postId перед выполнением запроса\r",
+									"pm.environment.set(\"postId\", 99999);"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/posts/{{postId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}"
+							]
+						},
+						"description": "Этот тест проверяет корректность обработки запроса поста по несуществующему ID. Ожидается, что сервер вернёт сообщение об ошибке вместо данных.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 404 Not Found.  \n• Структура данных: тело ответа представляет собой объект с обязательным полем message (строка).  \n• Сообщение об ошибке: текст указывает, что пост с указанным ID не найден.  \n• Отсутствие данных: в ответе отсутствуют поля поста (id, title, body и т.п.)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Post by id - Invalid ID Format (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем значение postId из окружения\r",
+									"const invalidPostId = pm.environment.get(\"postId\");\r",
+									"\r",
+									"// Получаем тело ответа в формате JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код ответа 400 Bad Request\r",
+									"pm.test(\"Код статуса равен 400 Bad Request\", function () {\r",
+									"    pm.response.to.have.status(400);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что ответ содержит объект с сообщением об ошибке\r",
+									"pm.test(\"Ответ содержит сообщение об ошибке\", function () {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData).to.have.property(\"message\").that.is.a(\"string\");\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что в сообщении упоминается invalid post id с текущим значением\r",
+									"pm.test(`Сообщение указывает на недопустимый формат post id '${invalidPostId}'`, function () {\r",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include(`invalid post id '${invalidPostId.toLowerCase()}'`);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что в ответе нет данных о посте (id, title, body и т.п.)\r",
+									"pm.test(\"В ответе отсутствуют данные поста\", function () {\r",
+									"    pm.expect(jsonData).to.not.have.property(\"id\");\r",
+									"    pm.expect(jsonData).to.not.have.property(\"title\");\r",
+									"    pm.expect(jsonData).to.not.have.property(\"body\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную окружения postId перед выполнением запроса\r",
+									"pm.environment.set(\"postId\", \"dsfdsaf\");"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/posts/{{postId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"posts",
+								"{{postId}}"
+							]
+						},
+						"description": "Этот тест проверяет корректность обработки запроса поста с недопустимым форматом ID. Ожидается, что сервер вернёт ошибку о неверном идентификаторе, без данных поста.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 400 Bad Request.  \n• Структура данных: тело ответа — объект с обязательным полем message (строка).  \n• Сообщение об ошибке: текст содержит указание на недопустимый формат идентификатора, включая переданное значение.  \n• Отсутствие данных: в ответе нет полей поста (id, title, body и т.п.)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get posts - (Pagination - Page 1) (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа равен 200 (успешный запрос)\r",
+									"pm.test(\"Код статуса равен 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть свойство 'posts' и оно является массивом\r",
+									"pm.test(\"В ответе есть массив 'posts'\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"posts\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что длина массива 'posts' равна 10 (соответствует параметру limit)\r",
+									"pm.test(\"Длина массива 'posts' равна 10 (limit)\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.posts.length).to.eql(10);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ID постов уникальны (нет повторяющихся)\r",
+									"pm.test(\"ID постов уникальны\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let ids = jsonData.posts.map(p => p.id);\r",
+									"    let uniqueIds = new Set(ids);\r",
+									"    pm.expect(uniqueIds.size).to.eql(ids.length);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ID первого поста равен 1 (для skip=0)\r",
+									"pm.test(\"ID первого поста начинается с 1 (skip=0)\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let firstPostId = jsonData.posts[0].id;\r",
+									"    pm.expect(firstPostId).to.eql(1);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/posts?limit=10&skip=0",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "skip",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка постов с параметрами пагинации (первая страница). Ожидается, что сервер вернёт массив постов в соответствии с заданными параметрами limit=10 и skip=0.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство posts, которое является массивом.  \n• Ограничение выборки: длина массива posts равна 10 (значение параметра limit).  \n• Уникальность: все посты в массиве имеют уникальные id.  \n• Порядок выборки: первый пост в списке имеет id = 1, что соответствует параметру skip=0."
+					},
+					"response": []
+				},
+				{
+					"name": "Get posts - (Pagination - Page 2) (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа равен 200 (успешный запрос)\r",
+									"pm.test(\"Код статуса равен 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть свойство 'posts' и оно является массивом\r",
+									"pm.test(\"В ответе есть массив 'posts'\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"posts\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что длина массива 'posts' равна 10 (соответствует параметру limit)\r",
+									"pm.test(\"Длина массива 'posts' равна 10 (limit)\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.posts.length).to.eql(10);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ID постов уникальны (нет повторяющихся)\r",
+									"pm.test(\"ID постов уникальны\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let ids = jsonData.posts.map(p => p.id);\r",
+									"    let uniqueIds = new Set(ids);\r",
+									"    pm.expect(uniqueIds.size).to.eql(ids.length);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ID первого поста равен 11 (для skip=10)\r",
+									"pm.test(\"ID первого поста начинается с 11 (skip=10)\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let firstPostId = jsonData.posts[0].id;\r",
+									"    pm.expect(firstPostId).to.eql(11);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/posts?limit=10&skip=10",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"posts"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "skip",
+									"value": "10"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка постов с параметрами пагинации (вторая страница). Ожидается, что сервер вернёт массив постов в соответствии с заданными параметрами limit=10 и skip=10.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство posts, которое является массивом.  \n• Ограничение выборки: длина массива posts равна 10 (значение параметра limit).  \n• Уникальность: все посты в массиве имеют уникальные id.  \n• Порядок выборки: первый пост на второй странице имеет id = 11, что соответствует параметру skip=10."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Posts - Negative Limit (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"const totalPosts = jsonData.total;\r",
+									"const skip = jsonData.skip;\r",
+									"const limit = jsonData.limit;\r",
+									"\r",
+									"const expectedLimit = parseInt(pm.environment.get(\"postsLimit\"));\r",
+									"const expectedSkip = parseInt(pm.environment.get(\"postsSkip\"));\r",
+									"\r",
+									"// Рассчитываем ожидаемый limit с учётом skip (для отрицательного expectedLimit)\r",
+									"const calculatedLimit = expectedLimit < 0 ? totalPosts + expectedLimit - expectedSkip : expectedLimit;\r",
+									"\r",
+									"pm.test(\"Код статуса равен 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(`Поле total равно ${totalPosts}`, () => {\r",
+									"    pm.expect(totalPosts).to.be.a(\"number\").and.to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(`Поле skip равно ${expectedSkip}`, () => {\r",
+									"    pm.expect(skip).to.equal(expectedSkip);\r",
+									"});\r",
+									"\r",
+									"pm.test(`Поле limit равно ${calculatedLimit}`, () => {\r",
+									"    pm.expect(limit).to.equal(calculatedLimit);\r",
+									"});\r",
+									"\r",
+									"pm.test(`В ответе возвращается ${calculatedLimit} постов`, () => {\r",
+									"    pm.expect(jsonData.posts).to.be.an(\"array\").with.lengthOf(calculatedLimit);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Каждый пост имеет числовой id\", () => {\r",
+									"    jsonData.posts.forEach(post => {\r",
+									"        pm.expect(post).to.have.property(\"id\").that.is.a(\"number\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Задаём переменные окружения для limit и skip\r",
+									"pm.environment.set(\"postsLimit\", -245);\r",
+									"pm.environment.set(\"postsSkip\", 2);\r",
+									"\r",
+									"// Формируем URL с параметрами из переменных окружения\r",
+									"const baseURL = pm.environment.get(\"baseURL\");\r",
+									"const limit = pm.environment.get(\"postsLimit\");\r",
+									"const skip = pm.environment.get(\"postsSkip\");\r",
+									"\r",
+									"// Записываем в переменную запроса\r",
+									"pm.variables.set(\"requestUrl\", `${baseURL}/posts?limit=${limit}&skip=${skip}`);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{requestUrl}}",
+							"host": [
+								"{{requestUrl}}"
+							]
+						},
+						"description": "GET {{baseURL}}/posts?limit={{postsLimit}}&skip={{postsSkip}}\n\nТест обработки отрицательного значения параметра **limit**.\n\nПеременные окружения:\n\n- **postsLimit** — отрицательное значение лимита (например, -245)\n    \n- **postsSkip** — смещение (skip), например 2\n    \n\nОжидаемое поведение API:\n\nAPI не возвращает ошибку, а вычисляет возвращаемое количество постов по формуле:  \n**limit** = **total** + **postsLimit** - **postsSkip**\n\nВ ответе проверяется:\n\n- статус 200 OK\n    \n- корректность полей **total**, **skip**, **limit**\n    \n- количество возвращённых постов соответствует вычисленному **limit**\n    \n\nЦель — проверить устойчивость и предсказуемость API при необычных параметрах."
+					},
+					"response": []
+				}
+			],
+			"description": "Тестирование работы с постами.  \n  \nВключает проверку получения списка постов с пагинацией, получение поста по ID, а также проверку корректности параметров `limit` и `skip`."
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что статус ответа 200 OK\r",
+									"pm.test(\"Код статуса 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив 'products'\r",
+									"pm.test(\"В ответе есть массив 'products'\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"products\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что продуктов в ответе 30 (дефолтный лимит)\r",
+									"pm.test(\"В массиве 'products' ровно 30 элементов\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.products.length).to.eql(30);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что все id продуктов уникальны\r",
+									"pm.test(\"ID продуктов уникальны\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let ids = jsonData.products.map(p => p.id);\r",
+									"    let uniqueIds = new Set(ids);\r",
+									"    pm.expect(uniqueIds.size).to.eql(ids.length);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что у каждого продукта есть обязательные поля: id, title, price\r",
+									"pm.test(\"У каждого продукта есть id, title и price\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    jsonData.products.forEach(product => {\r",
+									"        pm.expect(product).to.have.property(\"id\");\r",
+									"        pm.expect(product).to.have.property(\"title\");\r",
+									"        pm.expect(product).to.have.property(\"price\");\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка всех продуктов без указания параметров пагинации. Ожидается, что сервер вернёт массив продуктов с дефолтным ограничением limit=30.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство products, которое является массивом.  \n• Ограничение выборки: в массиве products ровно 30 элементов (значение по умолчанию).  \n• Уникальность: все продукты имеют уникальные id.  \n• Обязательные поля: у каждого продукта присутствуют id, title, price."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by id (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем значение productId из переменной окружения\r",
+									"const expectedId = parseInt(pm.environment.get(\"productId\"));\r",
+									"\r",
+									"// Преобразуем тело ответа в JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что статус ответа 200 OK\r",
+									"pm.test(\"Код статуса 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверка соответствия JSON-схеме\r",
+									"const productSchema = {\r",
+									"    type: \"object\",\r",
+									"    required: [\r",
+									"        \"id\", \"title\", \"description\", \"category\", \"price\",\r",
+									"        \"discountPercentage\", \"rating\", \"stock\", \"tags\",\r",
+									"        \"sku\", \"weight\", \"dimensions\", \"warrantyInformation\",\r",
+									"        \"shippingInformation\", \"availabilityStatus\", \"reviews\",\r",
+									"        \"returnPolicy\", \"minimumOrderQuantity\", \"meta\", \"images\", \"thumbnail\"\r",
+									"    ],\r",
+									"    properties: {\r",
+									"        id: { type: \"integer\" },\r",
+									"        title: { type: \"string\" },\r",
+									"        description: { type: \"string\" },\r",
+									"        category: { type: \"string\" },\r",
+									"        price: { type: \"number\" },\r",
+									"        discountPercentage: { type: \"number\" },\r",
+									"        rating: { type: \"number\" },\r",
+									"        stock: { type: \"integer\" },\r",
+									"        tags: { type: \"array\", items: { type: \"string\" } },\r",
+									"        sku: { type: \"string\" },\r",
+									"        weight: { type: \"number\" },\r",
+									"        dimensions: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"width\", \"height\", \"depth\"],\r",
+									"            properties: {\r",
+									"                width: { type: \"number\" },\r",
+									"                height: { type: \"number\" },\r",
+									"                depth: { type: \"number\" }\r",
+									"            }\r",
+									"        },\r",
+									"        warrantyInformation: { type: \"string\" },\r",
+									"        shippingInformation: { type: \"string\" },\r",
+									"        availabilityStatus: { type: \"string\" },\r",
+									"        reviews: {\r",
+									"            type: \"array\",\r",
+									"            items: {\r",
+									"                type: \"object\",\r",
+									"                required: [\"rating\", \"comment\", \"date\", \"reviewerName\", \"reviewerEmail\"],\r",
+									"                properties: {\r",
+									"                    rating: { type: \"number\" },\r",
+									"                    comment: { type: \"string\" },\r",
+									"                    date: { type: \"string\" },\r",
+									"                    reviewerName: { type: \"string\" },\r",
+									"                    reviewerEmail: { type: \"string\" }\r",
+									"                }\r",
+									"            }\r",
+									"        },\r",
+									"        returnPolicy: { type: \"string\" },\r",
+									"        minimumOrderQuantity: { type: \"integer\" },\r",
+									"        meta: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"createdAt\", \"updatedAt\", \"barcode\", \"qrCode\"],\r",
+									"            properties: {\r",
+									"                createdAt: { type: \"string\" },\r",
+									"                updatedAt: { type: \"string\" },\r",
+									"                barcode: { type: \"string\" },\r",
+									"                qrCode: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        images: { type: \"array\", items: { type: \"string\" } },\r",
+									"        thumbnail: { type: \"string\" }\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"pm.test(\"Ответ соответствует JSON-схеме\", () => {\r",
+									"    pm.response.to.have.jsonSchema(productSchema);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Тест: Проверяем, что ID продукта соответствует ожидаемому\r",
+									"pm.test(`ID продукта равен ${expectedId}`, () => {\r",
+									"    pm.expect(jsonData.id).to.eql(expectedId);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную productId перед выполнением запроса (случайное число от 1 до 100)\r",
+									"const randomProductId = Math.floor(Math.random() * 100) + 1;\r",
+									"pm.environment.set(\"productId\", randomProductId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/{{productId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения продукта по его ID. Для запроса случайным образом выбирается идентификатор от 1 до 100, так как известно, что в базе содержится более 100 товаров.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Соответствие JSON-схеме: объект продукта содержит все обязательные поля (id, title, description, category, price, stock, images, thumbnail и др.).  \n• Корректность ID: значение поля id в ответе совпадает с запрошенным productId.  \n• Структура вложенных данных: у объекта продукта корректно определены вложенные объекты (dimensions, meta, reviews) с обязательными полями.  \n• Формат данных: массивы (tags, images, reviews) и строковые/числовые значения соответствуют ожидаемым типам."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by id - Non-existent ID (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем значение productId из переменной окружения\r",
+									"const expectedId = parseInt(pm.environment.get(\"productId\"));\r",
+									"\r",
+									"// Преобразуем тело ответа в JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код статуса соответствует ошибке \"не найдено\"\r",
+									"pm.test(\"Код статуса 404\", () => {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что ответ содержит объект с сообщением об ошибке\r",
+									"pm.test(\"Ответ содержит объект с полем 'message'\", () => {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData).to.have.property(\"message\").that.is.a(\"string\");\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что сообщение об ошибке содержит ID продукта\r",
+									"pm.test(`Сообщение содержит ID продукта ${expectedId}`, () => {\r",
+									"    pm.expect(jsonData.message).to.include(expectedId.toString());\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную productId перед выполнением запроса\r",
+									"pm.environment.set(\"productId\", 1000000);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/{{productId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Этот тест проверяет корректность обработки запроса продукта по несуществующему ID. Для проверки используется заведомо неверный идентификатор (1000000), которого нет в базе.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 404 Not Found.  \n• Структура данных: тело ответа представляет собой объект с обязательным полем message (строка).  \n• Сообщение об ошибке: текст сообщения указывает, что продукт с данным ID не найден, и содержит переданное значение идентификатора.  \n• Отсутствие данных: в ответе нет информации о продукте (id, title, price и других полей)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Products - Pagination - Page 1 (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем статус ответа\r",
+									"pm.test(\"Статус ответа 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив 'products' и он содержит ровно 5 элементов\r",
+									"pm.test(\"В ответе есть массив 'products' длиной 5\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"products\").that.is.an(\"array\");\r",
+									"    pm.expect(jsonData.products.length).to.eql(5);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что каждый продукт содержит обязательные поля: id, title, price\r",
+									"pm.test(\"Каждый продукт содержит id, title и price\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    jsonData.products.forEach(product => {\r",
+									"        pm.expect(product).to.have.property(\"id\");\r",
+									"        pm.expect(product).to.have.property(\"title\");\r",
+									"        pm.expect(product).to.have.property(\"price\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ID продуктов идут подряд, начиная с 1\", () => {\r",
+									"    // Получаем JSON-ответ\r",
+									"    let jsonData = pm.response.json();\r",
+									"\r",
+									"    // Создаем массив с id продуктов\r",
+									"    const ids = jsonData.products.map(p => p.id);\r",
+									"\r",
+									"    // Проверяем, что каждый id равен индексу + 1, то есть последовательные начиная с 1\r",
+									"    for (let i = 0; i < ids.length; i++) {\r",
+									"        pm.expect(ids[i]).to.eql(i + 1);\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products?limit=5&skip=0",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "skip",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка продуктов с параметрами пагинации для первой страницы (limit=5, skip=0). Ожидается, что сервер вернёт первые 5 товаров из базы.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство products, которое является массивом.  \n• Ограничение выборки: в массиве products ровно 5 элементов (значение параметра limit).  \n• Обязательные поля: у каждого продукта присутствуют id, title, price.  \n• Порядок выборки: ID продуктов идут подряд начиная с 1 (так как skip=0)."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Products - Pagination - Page 2 (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем статус ответа\r",
+									"pm.test(\"Статус ответа 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив 'products' и он содержит ровно 5 элементов\r",
+									"pm.test(\"В ответе есть массив 'products' длиной 5\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"products\").that.is.an(\"array\");\r",
+									"    pm.expect(jsonData.products.length).to.eql(5);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что каждый продукт содержит обязательные поля: id, title, price\r",
+									"pm.test(\"Каждый продукт содержит id, title и price\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    jsonData.products.forEach(product => {\r",
+									"        pm.expect(product).to.have.property(\"id\");\r",
+									"        pm.expect(product).to.have.property(\"title\");\r",
+									"        pm.expect(product).to.have.property(\"price\");\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"ID продуктов идут подряд, начиная с 6\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    const ids = jsonData.products.map(p => p.id);\r",
+									"    for (let i = 0; i < ids.length; i++) {\r",
+									"        pm.expect(ids[i]).to.eql(i + 6);\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products?limit=5&skip=5",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "5"
+								},
+								{
+									"key": "skip",
+									"value": "5"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка продуктов с параметрами пагинации для второй страницы (limit=5, skip=5). Ожидается, что сервер вернёт следующие 5 товаров, начиная с ID=6.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство products, которое является массивом.  \n• Ограничение выборки: в массиве products ровно 5 элементов (значение параметра limit).  \n• Обязательные поля: у каждого продукта присутствуют id, title, price.  \n• Порядок выборки: ID продуктов идут подряд начиная с 6 (так как skip=5)."
+					},
+					"response": []
+				},
+				{
+					"name": "Add a new product (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что статус ответа 201 Created (успешное добавление)\r",
+									"pm.test(\"Статус ответа 201\", () => {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть объект с данными нового продукта\r",
+									"pm.test(\"Ответ содержит объект продукта\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что у нового продукта есть поле id (число)\r",
+									"pm.test(\"Новый продукт содержит поле id типа number\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"id\").that.is.a(\"number\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть поле title и оно не пустое\r",
+									"pm.test(\"Новый продукт содержит поле title\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"title\").that.is.a(\"string\").and.not.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"BMW Pencil\",\r\n  \"description\": \"A luxury graphite pencil.\",\r\n  \"price\": 99,\r\n  \"brand\": \"BMW\",\r\n  \"category\": \"stationery\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/add",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"add"
+							]
+						},
+						"description": "Этот тест проверяет корректность добавления нового продукта в базу данных. В теле запроса передаются данные о продукте (title, description, price, brand, category).  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 201 Created.  \n• Структура данных: тело ответа представляет собой объект с данными нового продукта.  \n• Генерация ID: у созданного продукта появляется поле id (числового типа).  \n• Корректность данных: в ответе присутствуют переданные значения (title, description, price, brand, category), при этом поле title является непустой строкой."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что статус ответа 200\r",
+									"pm.test(\"Статус ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ответ JSON\r",
+									"pm.test(\"Ответ в формате JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"});\r",
+									"\r",
+									"// Парсим тело ответа\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Проверяем, что поле title обновилось\r",
+									"pm.test(\"Title обновлен\", function () {\r",
+									"    pm.expect(jsonData.title).to.eql(\"iPhone Galaxy +32\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что поле price обновилось\r",
+									"pm.test(\"Цена обновлена\", function () {\r",
+									"    pm.expect(jsonData.price).to.eql(125000.34);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что id равен 4\r",
+									"pm.test(\"ID продукта равен 4\", function () {\r",
+									"    pm.expect(jsonData.id).to.eql(4);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что ответ содержит другие обязательные поля\r",
+									"pm.test(\"Ответ содержит необходимые поля\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"price\");\r",
+									"    pm.expect(jsonData).to.have.property(\"description\");\r",
+									"    pm.expect(jsonData).to.have.property(\"category\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "\tBearer {{accessToken}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"iPhone Galaxy +32\",\r\n  \"price\": 125000.34\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/4",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"4"
+							]
+						},
+						"description": "Этот тест проверяет корректность обновления существующего продукта по его ID (id = 4). В теле запроса передаются новые значения для полей продукта (title, price).  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Формат данных: ответ представлен в формате JSON.  \n• Обновление полей: значения title и price соответствуют переданным в запросе.  \n• Корректность ID: поле id в ответе равно 4.  \n• Наличие обязательных полей: в ответе присутствуют description, category, discountPercentage, stock, rating, images, thumbnail, brand."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete product (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа HTTP равен 200 (успешное выполнение запроса)\r",
+									"pm.test(\"Статус ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть поле id и оно равно 9\r",
+									"pm.test(\"Ответ содержит id = 9\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.eql(9);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что поле isDeleted равно true (продукт помечен как удалён)\r",
+									"pm.test(\"Продукт помечен как удалён (isDeleted=true)\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.isDeleted).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что поле deletedOn существует и содержит дату\r",
+									"pm.test(\"Поле deletedOn существует и содержит дату\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.deletedOn).to.exist;\r",
+									"    pm.expect(Date.parse(jsonData.deletedOn)).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Дополнительно можно проверить, что название продукта соответствует ожидаемому\r",
+									"pm.test(\"Название продукта соответствует ожидаемому\", function () {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.title).to.eql(\"Dolce Shine Eau de\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/9",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"9"
+							]
+						},
+						"description": "Этот тест проверяет корректность удаления продукта по его ID (id = 9).  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Корректность ID: поле id в ответе равно 9.  \n• Статус удаления: поле isDeleted установлено в true, что указывает на успешное удаление.  \n• Метка времени: поле deletedOn присутствует и содержит корректную дату удаления.  \n• Дополнительно: название продукта (title) соответствует ожидаемому значению."
+					},
+					"response": []
+				}
+			],
+			"description": "Тестирование CRUD-операций с товарами.\n\nСодержит сценарии для получения списка товаров и одного товара по ID, пагинацию, создание нового товара, обновление данных и удаление."
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Get All Users (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа HTTP равен 200\r",
+									"pm.test(\"Код ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Парсим JSON-ответ\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив users\r",
+									"pm.test(\"Присутствует массив users\", function () {\r",
+									"    pm.expect(jsonData.users).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что получено не более 30 пользователей\r",
+									"pm.test(\"Получено не более 30 пользователей\", function () {\r",
+									"    pm.expect(jsonData.users.length).to.be.at.most(30);\r",
+									"});\r",
+									"\r",
+									"// Проверка полей первого пользователя\r",
+									"pm.test(\"Проверка структуры первого пользователя\", function () {\r",
+									"    let user = jsonData.users[0];\r",
+									"    pm.expect(user).to.have.property(\"id\");\r",
+									"    pm.expect(user).to.have.property(\"firstName\");\r",
+									"    pm.expect(user).to.have.property(\"lastName\");\r",
+									"    pm.expect(user).to.have.property(\"email\");\r",
+									"    pm.expect(user).to.have.property(\"birthDate\");\r",
+									"    pm.expect(user).to.have.property(\"gender\");\r",
+									"    pm.expect(user).to.have.property(\"hair\");\r",
+									"    pm.expect(user.hair).to.have.property(\"color\");\r",
+									"    pm.expect(user.hair).to.have.property(\"type\");\r",
+									"    pm.expect(user).to.have.property(\"company\");\r",
+									"    pm.expect(user.company).to.have.property(\"name\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения списка пользователей. Если не указаны параметры лимита, сервер возвращает дефолтное количество пользователей — 30.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство users, которое является массивом.  \n• Ограничение выборки: возвращено ровно 30 пользователей (дефолтный лимит).  \n• Проверка структуры: у каждого пользователя (на примере первого в массиве) присутствуют обязательные поля: id, firstName, lastName, email, birthDate, gender, hair, company. Вложенные объекты: у поля hair присутствуют color и type, у объекта company присутствует name."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Users - Pagination (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что код ответа HTTP равен 200\r",
+									"pm.test(\"Код ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Парсим JSON-ответ\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив users\r",
+									"pm.test(\"Присутствует массив users\", function () {\r",
+									"    pm.expect(jsonData.users).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что получено не более 30 пользователей\r",
+									"pm.test(\"Получено не более 30 пользователей\", function () {\r",
+									"    pm.expect(jsonData.users.length).to.be.at.most(30);\r",
+									"});\r",
+									"\r",
+									"// Проверка полей первого пользователя\r",
+									"pm.test(\"Проверка структуры первого пользователя\", function () {\r",
+									"    let user = jsonData.users[0];\r",
+									"    pm.expect(user).to.have.property(\"id\");\r",
+									"    pm.expect(user).to.have.property(\"firstName\");\r",
+									"    pm.expect(user).to.have.property(\"lastName\");\r",
+									"    pm.expect(user).to.have.property(\"email\");\r",
+									"    pm.expect(user).to.have.property(\"birthDate\");\r",
+									"    pm.expect(user).to.have.property(\"gender\");\r",
+									"    pm.expect(user).to.have.property(\"hair\");\r",
+									"    pm.expect(user.hair).to.have.property(\"color\");\r",
+									"    pm.expect(user.hair).to.have.property(\"type\");\r",
+									"    pm.expect(user).to.have.property(\"company\");\r",
+									"    pm.expect(user.company).to.have.property(\"name\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Проверяем, что возвращены правильные пользователи с учётом пагинации\", () => {\r",
+									"    let users = jsonData.users;\r",
+									"    let usersLimit = parseInt(pm.environment.get(\"usersLimit\"));\r",
+									"    let usersSkip = parseInt(pm.environment.get(\"usersSkip\"));\r",
+									"\r",
+									"    pm.expect(users.length).to.eql(usersLimit);\r",
+									"\r",
+									"    // Проверяем, что id пользователей идут подряд, начиная с usersSkip + 1\r",
+									"    for (let i = 0; i < usersLimit; i++) {\r",
+									"        let expectedId = usersSkip + i + 1;\r",
+									"        pm.expect(users[i].id).to.eql(expectedId, `Пользователь под индексом ${i} должен иметь id ${expectedId}`);\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменные для пагинации\r",
+									"// limit — количество пользователей на странице\r",
+									"// skip — сколько пользователей пропустить с начала\r",
+									"pm.environment.set(\"usersLimit\", 5);\r",
+									"pm.environment.set(\"usersSkip\", 10); // для первой страницы, для второй можно поставить 5 и т.д.\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users?limit={{usersLimit}}&skip={{usersSkip}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "{{usersLimit}}"
+								},
+								{
+									"key": "skip",
+									"value": "{{usersSkip}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность получения пользователей с параметрами пагинации. Перед выполнением запроса в Pre-request устанавливаются переменные:  \n• usersLimit — количество пользователей на странице.  \n• usersSkip — количество пользователей, которые нужно пропустить с начала.  \nПример: для первой страницы usersLimit = 5, usersSkip = 0, для второй страницы можно поставить usersLimit = 5, usersSkip = 5.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует свойство users, которое является массивом.  \n• Ограничение выборки: возвращено ровно usersLimit пользователей.  \n• Проверка структуры: у каждого пользователя (на примере первого в массиве) присутствуют обязательные поля: id, firstName, lastName, email, birthDate, gender, hair, company.  \n• Вложенные объекты: у поля hair присутствуют color и type, у объекта company присутствует name.  \n• Порядок выборки: ID пользователей идут подряд, начиная с usersSkip + 1, что подтверждает корректное применение пагинации."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by id (Positive)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем ожидаемый ID пользователя из переменной окружения\r",
+									"const expectedId = parseInt(pm.environment.get(\"userId\"));\r",
+									"\r",
+									"// Преобразуем ответ в JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код ответа равен 200\r",
+									"pm.test(\"Код ответа сервера равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что полученный ID соответствует ожидаемому\r",
+									"pm.test(`ID пользователя должен быть равен ${expectedId}`, function () {\r",
+									"    pm.expect(jsonData.id).to.eql(expectedId);\r",
+									"});\r",
+									"\r",
+									"// JSON Schema для полной проверки пользователя\r",
+									"const userSchema = {\r",
+									"    type: \"object\",\r",
+									"    required: [\r",
+									"        \"id\",\"firstName\",\"lastName\",\"maidenName\",\"age\",\"gender\",\"email\",\"phone\",\r",
+									"        \"username\",\"password\",\"birthDate\",\"image\",\"bloodGroup\",\"height\",\"weight\",\r",
+									"        \"eyeColor\",\"hair\",\"ip\",\"address\",\"macAddress\",\"university\",\"bank\",\r",
+									"        \"company\",\"ein\",\"ssn\",\"userAgent\",\"crypto\",\"role\"\r",
+									"    ],\r",
+									"    properties: {\r",
+									"        id: { type: \"integer\" },\r",
+									"        firstName: { type: \"string\" },\r",
+									"        lastName: { type: \"string\" },\r",
+									"        maidenName: { type: \"string\" },\r",
+									"        age: { type: \"integer\" },\r",
+									"        gender: { type: \"string\" },\r",
+									"        email: { type: \"string\", format: \"email\" },\r",
+									"        phone: { type: \"string\" },\r",
+									"        username: { type: \"string\" },\r",
+									"        password: { type: \"string\" },\r",
+									"        birthDate: { type: \"string\" },\r",
+									"        image: { type: \"string\", format: \"uri\" },\r",
+									"        bloodGroup: { type: \"string\" },\r",
+									"        height: { type: \"number\" },\r",
+									"        weight: { type: \"number\" },\r",
+									"        eyeColor: { type: \"string\" },\r",
+									"        hair: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"color\",\"type\"],\r",
+									"            properties: {\r",
+									"                color: { type: \"string\" },\r",
+									"                type: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        ip: { type: \"string\" },\r",
+									"        address: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"address\",\"city\",\"state\",\"stateCode\",\"postalCode\",\"coordinates\",\"country\"],\r",
+									"            properties: {\r",
+									"                address: { type: \"string\" },\r",
+									"                city: { type: \"string\" },\r",
+									"                state: { type: \"string\" },\r",
+									"                stateCode: { type: \"string\" },\r",
+									"                postalCode: { type: \"string\" },\r",
+									"                coordinates: {\r",
+									"                    type: \"object\",\r",
+									"                    required: [\"lat\",\"lng\"],\r",
+									"                    properties: {\r",
+									"                        lat: { type: \"number\" },\r",
+									"                        lng: { type: \"number\" }\r",
+									"                    }\r",
+									"                },\r",
+									"                country: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        macAddress: { type: \"string\" },\r",
+									"        university: { type: \"string\" },\r",
+									"        bank: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"cardExpire\",\"cardNumber\",\"cardType\",\"currency\",\"iban\"],\r",
+									"            properties: {\r",
+									"                cardExpire: { type: \"string\" },\r",
+									"                cardNumber: { type: \"string\" },\r",
+									"                cardType: { type: \"string\" },\r",
+									"                currency: { type: \"string\" },\r",
+									"                iban: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        company: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"department\",\"name\",\"title\",\"address\"],\r",
+									"            properties: {\r",
+									"                department: { type: \"string\" },\r",
+									"                name: { type: \"string\" },\r",
+									"                title: { type: \"string\" },\r",
+									"                address: {\r",
+									"                    type: \"object\",\r",
+									"                    required: [\"address\",\"city\",\"state\",\"stateCode\",\"postalCode\",\"coordinates\",\"country\"],\r",
+									"                    properties: {\r",
+									"                        address: { type: \"string\" },\r",
+									"                        city: { type: \"string\" },\r",
+									"                        state: { type: \"string\" },\r",
+									"                        stateCode: { type: \"string\" },\r",
+									"                        postalCode: { type: \"string\" },\r",
+									"                        coordinates: {\r",
+									"                            type: \"object\",\r",
+									"                            required: [\"lat\",\"lng\"],\r",
+									"                            properties: {\r",
+									"                                lat: { type: \"number\" },\r",
+									"                                lng: { type: \"number\" }\r",
+									"                            }\r",
+									"                        },\r",
+									"                        country: { type: \"string\" }\r",
+									"                    }\r",
+									"                }\r",
+									"            }\r",
+									"        },\r",
+									"        ein: { type: \"string\" },\r",
+									"        ssn: { type: \"string\" },\r",
+									"        userAgent: { type: \"string\" },\r",
+									"        crypto: {\r",
+									"            type: \"object\",\r",
+									"            required: [\"coin\",\"wallet\",\"network\"],\r",
+									"            properties: {\r",
+									"                coin: { type: \"string\" },\r",
+									"                wallet: { type: \"string\" },\r",
+									"                network: { type: \"string\" }\r",
+									"            }\r",
+									"        },\r",
+									"        role: { type: \"string\" }\r",
+									"    }\r",
+									"};\r",
+									"\r",
+									"// Тест: Проверяем соответствие JSON-схеме\r",
+									"pm.test(\"Ответ соответствует JSON-схеме пользователя\", function () {\r",
+									"    pm.response.to.have.jsonSchema(userSchema);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную userId перед выполнением запроса (случайное число от 1 до 208)\r",
+									"const randomUserId = Math.floor(Math.random() * 208) + 1;\r",
+									"pm.environment.set(\"userId\", randomUserId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Этот тест проверяет корректность получения пользователя по его ID. В Pre-request случайным образом выбирается идентификатор пользователя от 1 до 208 и сохраняется в переменную userId.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Соответствие ID: значение поля id в ответе совпадает с запрошенным userId.  \n• Соответствие JSON-схеме: объект пользователя содержит все обязательные поля (id, firstName, lastName и т.д.) и вложенные объекты имеют корректную структуру."
+					},
+					"response": []
+				},
+				{
+					"name": "Get User by id - Non-existent ID (Negative)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем ожидаемый ID пользователя из переменной окружения\r",
+									"const expectedId = parseInt(pm.environment.get(\"userId\"));\r",
+									"\r",
+									"// Преобразуем ответ в JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код ответа 404\r",
+									"pm.test(\"Код ответа сервера 404 (пользователь не найден)\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что ответ содержит поле message\r",
+									"pm.test(\"Ответ содержит поле 'message' с текстом not found\", function () {\r",
+									"    pm.expect(jsonData).to.be.an(\"object\");\r",
+									"    pm.expect(jsonData).to.have.property(\"message\").that.is.a(\"string\");\r",
+									"    pm.expect(jsonData.message.toLowerCase()).to.include(\"not found\");\r",
+									"    pm.expect(jsonData.message).to.include(expectedId.toString());\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что сообщение об ошибке содержит ID пользователя\r",
+									"pm.test(`Сообщение об ошибке содержит ID ${expectedId}`, function () {\r",
+									"    pm.expect(jsonData.message).to.include(expectedId.toString());\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную userId перед выполнением запроса\r",
+									"pm.environment.set(\"userId\", 334);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/{{userId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						},
+						"description": "Этот тест проверяет обработку запроса пользователя по несуществующему ID. В Pre-request устанавливается идентификатор пользователя userId = 334, которого нет в базе.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 404 Not Found.  \n• Сообщение об ошибке: ответ содержит поле message, в котором упоминается запрошенный userId.  \n• Отсутствие данных пользователя: в ответе нет информации о пользователе."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Users by email (Positive)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную searchQuery перед выполнением запроса\r",
+									"// Поиск на https://dummyjson.com/users/search?q=... выполняется по нескольким текстовым полям пользователя:\r",
+									"// firstName, lastName, username, email.\r",
+									"// Примеры поисковых запросов: \"Emma\", \"Wilson\", \"oliviaw\", \"emily.johnson@x.dummyjson.com\"\r",
+									"pm.environment.set(\"searchQuery\", \"emily.johnson@x.dummyjson.com\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем поисковый запрос из переменной окружения и приводим к нижнему регистру\r",
+									"const searchQuery = pm.environment.get(\"searchQuery\").toLowerCase();\r",
+									"\r",
+									"// Получаем тело ответа\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что статус ответа 200\r",
+									"pm.test(\"Код статуса равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что поле users присутствует и является массивом\r",
+									"pm.test(\"Поле users присутствует и является массивом\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"users\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что список пользователей не пустой\r",
+									"pm.test(\"Список пользователей не пустой\", function () {\r",
+									"    pm.expect(jsonData.users.length).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что хотя бы один пользователь содержит поисковую строку в firstName, lastName, username или email\r",
+									"pm.test(`Хотя бы один пользователь содержит '${searchQuery}' в firstName, lastName, username или email`, function () {\r",
+									"    const matchFound = jsonData.users.some(user => \r",
+									"        (user.firstName && user.firstName.toLowerCase().includes(searchQuery)) ||\r",
+									"        (user.lastName && user.lastName.toLowerCase().includes(searchQuery)) ||\r",
+									"        (user.username && user.username.toLowerCase().includes(searchQuery)) ||\r",
+									"        (user.email && user.email.toLowerCase().includes(searchQuery))\r",
+									"    );\r",
+									"    pm.expect(matchFound).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что поля total, skip и limit присутствуют и являются числами\r",
+									"pm.test(\"Поля total, skip и limit присутствуют и являются числами\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"total\").that.is.a(\"number\");\r",
+									"    pm.expect(jsonData).to.have.property(\"skip\").that.is.a(\"number\");\r",
+									"    pm.expect(jsonData).to.have.property(\"limit\").that.is.a(\"number\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/search?q={{searchQuery}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{searchQuery}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность поиска пользователей по email. В Pre-request устанавливается переменная searchQuery, содержащая поисковый запрос - адрес электронной почты.  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует массив users, а также числовые поля total, skip, limit.  \n• Результаты поиска: хотя бы один пользователь содержит поисковую строку в firstName, lastName, username или email."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Users by name (Positive)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную searchQuery перед выполнением запроса\r",
+									"// Поиск на https://dummyjson.com/users/search?q=... выполняется по нескольким текстовым полям пользователя:\r",
+									"// firstName, lastName, username, email.\r",
+									"// Примеры поисковых запросов: \"Emma\", \"Wilson\", \"oliviaw\", \"emily.johnson@x.dummyjson.com\"\r",
+									"pm.environment.set(\"searchQuery\", \"Emma\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем поисковый запрос из переменной окружения и приводим к нижнему регистру\r",
+									"const searchQuery = pm.environment.get(\"searchQuery\").toLowerCase();\r",
+									"\r",
+									"// Получаем тело ответа\r",
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что статус ответа 200\r",
+									"pm.test(\"Код статуса равен 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что поле users присутствует и является массивом\r",
+									"pm.test(\"Поле users присутствует и является массивом\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"users\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что список пользователей не пустой\r",
+									"pm.test(\"Список пользователей не пустой\", function () {\r",
+									"    pm.expect(jsonData.users.length).to.be.above(0);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что хотя бы один пользователь содержит поисковую строку в firstName, lastName, username или email\r",
+									"pm.test(`Хотя бы один пользователь содержит '${searchQuery}' в firstName, lastName, username или email`, function () {\r",
+									"    const matchFound = jsonData.users.some(user => \r",
+									"        (user.firstName && user.firstName.toLowerCase().includes(searchQuery)) ||\r",
+									"        (user.lastName && user.lastName.toLowerCase().includes(searchQuery)) ||\r",
+									"        (user.username && user.username.toLowerCase().includes(searchQuery)) ||\r",
+									"        (user.email && user.email.toLowerCase().includes(searchQuery))\r",
+									"    );\r",
+									"    pm.expect(matchFound).to.be.true;\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что поля total, skip и limit присутствуют и являются числами\r",
+									"pm.test(\"Поля total, skip и limit присутствуют и являются числами\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"total\").that.is.a(\"number\");\r",
+									"    pm.expect(jsonData).to.have.property(\"skip\").that.is.a(\"number\");\r",
+									"    pm.expect(jsonData).to.have.property(\"limit\").that.is.a(\"number\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/search?q={{searchQuery}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{searchQuery}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет корректность поиска пользователей по имени. В Pre-request устанавливается переменная searchQuery, содержащая поисковое имя - \"Emma\".  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует массив users, а также числовые поля total, skip, limit.  \n• Результаты поиска: хотя бы один пользователь содержит поисковую строку в firstName, lastName, username или email."
+					},
+					"response": []
+				},
+				{
+					"name": "Search Users by name - Non-existent Name (Negative)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную searchQuery перед выполнением запроса\r",
+									"// Поиск на https://dummyjson.com/users/search?q=... выполняется по нескольким текстовым полям пользователя:\r",
+									"// firstName, lastName, username, email.\r",
+									"// Примеры поисковых запросов: \"Emma\", \"Wilson\", \"oliviaw\", \"emily.johnson@x.dummyjson.com\"\r",
+									"pm.environment.set(\"searchQuery\", \"Oleg\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем значение поискового запроса из переменной окружения\r",
+									"const searchQuery = pm.environment.get(\"searchQuery\");\r",
+									"\r",
+									"// Преобразуем ответ в JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код ответа 200\r",
+									"pm.test(\"Код ответа сервера 200 (поиск выполнен)\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что массив users пустой\r",
+									"pm.test(`По запросу \"${searchQuery}\" массив users пустой`, function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"users\").that.is.an(\"array\").that.is.empty;\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что total = 0\r",
+									"pm.test(`По запросу \"${searchQuery}\" total = 0`, function () {\r",
+									"    pm.expect(jsonData.total).to.eql(0);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что skip и limit равны 0\r",
+									"pm.test(`По запросу \"${searchQuery}\" skip и limit равны 0`, function () {\r",
+									"    pm.expect(jsonData.skip).to.eql(0);\r",
+									"    pm.expect(jsonData.limit).to.eql(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/search?q={{searchQuery}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"search"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "{{searchQuery}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет поведение поиска пользователей по несуществующему имени. В Pre-request устанавливается переменная searchQuery, содержащая имя, которого нет в базе (например, \"Oleg\").  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Результаты поиска: массив users пустой.  \n• Поля total, skip, limit равны 0."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Users by Hair Color (Positive)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную hairColor перед выполнением запроса\r",
+									"// Примеры: \"Brown\", \"Blonde\", \"Black\"\r",
+									"pm.environment.set(\"hairColor\", \"Black\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что статус ответа 200 OK\r",
+									"pm.test(\"Код статуса равен 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив users\r",
+									"pm.test(\"В ответе есть массив users\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"users\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что все найденные пользователи имеют hair.color, равный заданной переменной\r",
+									"pm.test(\"У всех пользователей hair.color соответствует заданному фильтру\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let expectedColor = pm.environment.get(\"hairColor\");\r",
+									"    jsonData.users.forEach(user => {\r",
+									"        pm.expect(user).to.have.nested.property(\"hair.color\", expectedColor);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/filter?key=hair.color&value={{hairColor}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hair.color"
+								},
+								{
+									"key": "value",
+									"value": "{{hairColor}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет фильтрацию пользователей по цвету волос. В Pre-request устанавливается переменная hairColor, содержащая значение для фильтра (например, \"Black\").  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует массив users.  \n• Результаты фильтрации: у всех пользователей значение hair.color соответствует заданной переменной."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Users by Hair Color - Invalid Color (Negative)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную hairColor перед выполнением запроса\r",
+									"// Примеры: \"Brown\", \"Blonde\", \"Black\"\r",
+									"pm.environment.set(\"hairColor\", \"Orange\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Получаем значение цвета волос из переменной окружения\r",
+									"const expectedColor = pm.environment.get(\"hairColor\");\r",
+									"\r",
+									"// Преобразуем ответ в JSON\r",
+									"const jsonData = pm.response.json();\r",
+									"\r",
+									"// Тест: Проверяем, что код ответа 200 (запрос выполнен корректно, но результатов нет)\r",
+									"pm.test(\"Код ответа сервера 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что поле users — массив и он пустой\r",
+									"pm.test(\"Массив users пустой\", function () {\r",
+									"    pm.expect(jsonData).to.have.property(\"users\").that.is.an(\"array\").that.is.empty;\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что total = 0\r",
+									"pm.test(\"Поле total равно 0\", function () {\r",
+									"    pm.expect(jsonData.total).to.eql(0);\r",
+									"});\r",
+									"\r",
+									"// Тест: Проверяем, что skip и limit равны 0\r",
+									"pm.test(\"Поля skip и limit равны 0\", function () {\r",
+									"    pm.expect(jsonData.skip).to.eql(0);\r",
+									"    pm.expect(jsonData.limit).to.eql(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/filter?key=hair.color&value={{hairColor}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hair.color"
+								},
+								{
+									"key": "value",
+									"value": "{{hairColor}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет фильтрацию пользователей по несуществующему цвету волос. В Pre-request устанавливается переменная hairColor, содержащая значение, которого нет в базе (например, \"Orange\").  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Результаты фильтрации: массив users пустой.  \n• Поля total, skip, limit равны 0."
+					},
+					"response": []
+				},
+				{
+					"name": "Filter Users by Hair Type (Positive)",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Устанавливаем переменную hairType перед выполнением запроса\r",
+									"// Примеры: \"Curly\", \"Straight\", \"Wavy\"\r",
+									"pm.environment.set(\"hairType\", \"Straight\");\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверяем, что статус ответа 200 OK\r",
+									"pm.test(\"Код статуса равен 200\", () => {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что в ответе есть массив users\r",
+									"pm.test(\"В ответе есть массив users\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData).to.have.property(\"users\").that.is.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"// Проверяем, что у всех пользователей hair.type совпадает с заданным фильтром\r",
+									"pm.test(\"У всех пользователей hair.type соответствует заданному фильтру\", () => {\r",
+									"    let jsonData = pm.response.json();\r",
+									"    let expectedType = pm.environment.get(\"hairType\");\r",
+									"    jsonData.users.forEach(user => {\r",
+									"        pm.expect(user).to.have.nested.property(\"hair.type\", expectedType);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/users/filter?key=hair.type&value={{hairType}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"users",
+								"filter"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hair.type"
+								},
+								{
+									"key": "value",
+									"value": "{{hairType}}"
+								}
+							]
+						},
+						"description": "Этот тест проверяет фильтрацию пользователей по типу волос. В Pre-request устанавливается переменная hairType, содержащая значение для фильтра (например, \"Straight\").  \nЧто проверяется:  \n• Код ответа: сервер возвращает статус 200 OK.  \n• Структура данных: в ответе присутствует массив users.  \n• Результаты фильтрации: у всех пользователей значение hair.type соответствует заданной переменной."
+					},
+					"response": []
+				}
+			],
+			"description": "Тестирование функционала, связанного с пользователями.\n\nВключает проверку получения списка пользователей (с пагинацией), получение пользователя по ID, поиск по имени, фильтрацию по различным параметрам."
+		},
+		{
+			"name": "Цепочки операций (Create → Update → Delete)",
+			"item": [
+				{
+					"name": "1. Add New Product (Positive) [Save ID]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Проверка: код ответа 201\r",
+									"pm.test(\"Код ответа 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"// Проверка: в ответе есть ID продукта\r",
+									"pm.test(\"В ответе есть ID продукта\", function () {\r",
+									"    pm.expect(jsonData.id).to.exist;\r",
+									"});\r",
+									"\r",
+									"// Сохраняем ID продукта в окружение\r",
+									"pm.environment.set(\"productId\", jsonData.id);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"BMW Pencil\",\r\n  \"description\": \"A cool pencil from BMW\",\r\n  \"price\": 10,\r\n  \"brand\": \"BMW\",\r\n  \"category\": \"stationery\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/add",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"add"
+							]
+						},
+						"description": "Отправляет запрос на добавление нового продукта в каталог.  \nAPI возвращает сгенерированный ID и переданные данные, но не сохраняет их на сервере (симуляция добавления)."
+					},
+					"response": []
+				},
+				{
+					"name": "2. Get Product by ID (Positive) [Using Saved ID]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Проверяем, что в окружении есть сохранённый ID продукта\r",
+									"pm.test(\"Есть сохранённый ID продукта\", function () {\r",
+									"    pm.expect(pm.environment.get(\"productId\")).to.exist;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Проверка: код ответа 200\r",
+									"pm.test(\"Код ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверка: ID в ответе совпадает с сохранённым\r",
+									"pm.test(\"ID продукта совпадает с сохранённым\", function () {\r",
+									"    pm.expect(jsonData.id).to.eql(parseInt(pm.environment.get(\"productId\")));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/{{productId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Получает данные о продукте по сохранённому ID из предыдущего шага.  \nНа DummyJSON реального продукта с этим ID нет, поэтому в ответе придёт ошибка \"not found\" (симуляция чтения)."
+					},
+					"response": []
+				},
+				{
+					"name": "3. Update Product (Positive) [Using Saved ID]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Проверяем, что ID продукта сохранён\r",
+									"pm.test(\"Есть сохранённый ID продукта\", function () {\r",
+									"    pm.expect(pm.environment.get(\"productId\")).to.exist;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"let jsonData = pm.response.json();\r",
+									"\r",
+									"// Проверка: код ответа 200\r",
+									"pm.test(\"Код ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверка: название продукта обновлено\r",
+									"pm.test(\"Название продукта обновлено\", function () {\r",
+									"    pm.expect(jsonData.title).to.eql(\"Updated BMW Pencil\");\r",
+									"});\r",
+									"\r",
+									"// Проверка: цена продукта обновлена\r",
+									"pm.test(\"Цена продукта обновлена\", function () {\r",
+									"    pm.expect(jsonData.price).to.eql(20);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"title\": \"Updated BMW Pencil\",\r\n  \"price\": 20\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/products/{{productId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Отправляет запрос на частичное обновление продукта по указанному ID. На DummyJSON сервер не сохраняет реальные изменения, поэтому приходит код 404 «Product not found». Этот запрос служит демонстрацией запроса PATCH и проверки логики обновления."
+					},
+					"response": []
+				},
+				{
+					"name": "4. Delete Product (Positive) [Using Saved ID]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Проверка, что сохранённый ID продукта есть в переменных окружения\r",
+									"if (!pm.environment.get(\"productId\")) {\r",
+									"    pm.environment.set(\"productId\", 1); // подставим дефолтное значение, чтобы тест не упал\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверка, что код ответа 200\r",
+									"pm.test(\"Код ответа 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Проверка, что в ответе есть поле isDeleted = true\r",
+									"pm.test(\"Продукт удалён\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.isDeleted).to.eql(true);\r",
+									"});\r",
+									"\r",
+									"// Проверка, что ID в ответе совпадает с сохранённым\r",
+									"pm.test(\"ID продукта совпадает с сохранённым\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.eql(parseInt(pm.environment.get(\"productId\")));\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/{{productId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Отправляет запрос на удаление продукта по указанному ID. На DummyJSON сервер не выполняет реальное удаление, поэтому возвращает код 404 «Product not found». Этот запрос служит демонстрацией запроса DELETE и проверки логики удаления."
+					},
+					"response": []
+				},
+				{
+					"name": "5. Get Deleted Product by ID (Negative) [Expect 404]",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"// Проверка, что сохранённый ID продукта есть в переменных окружения\r",
+									"if (!pm.environment.get(\"productId\")) {\r",
+									"    throw new Error(\"Отсутствует productId в переменных окружения. Невозможно проверить удаление.\");\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Проверка, что код ответа 404\r",
+									"pm.test(\"Код ответа 404 (продукт не найден)\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"// Проверка, что в сообщении явно указано, что продукт не найден\r",
+									"pm.test(\"Сообщение о том, что продукт не найден\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.include(\"not found\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/products/{{productId}}",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Повторно пытается получить продукт по удалённому ID.  \nОжидается ошибка \"not found\", подтверждающая, что цепочка завершена (симуляция проверки удаления)."
+					},
+					"response": []
+				}
+			],
+			"description": "Этот набор запросов демонстрирует пример CRUD-цепочки: создание продукта (Create), получение и обновление данных (Read, Update) и удаление (Delete) с последующей проверкой.  \nТесты выполняются на учебном API [https://dummyjson.com/](https://dummyjson.com/), который не сохраняет изменения на сервере. Все операции носят исключительно демонстрационный характер, а ответы формируются как симуляция. Реальных изменений данных в базе не происходит."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"// Проверка что сервер вернул JSON\r",
+					"pm.test(\"Ответ в JSON формате\", function () {\r",
+					"    pm.response.to.have.header(\"Content-Type\");\r",
+					"    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");\r",
+					"});\r",
+					"\r",
+					"// Проверка что время ответа не превышает 2 секунд\r",
+					"pm.test(\"Время ответа < 2000 мс\", function () {\r",
+					"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+					"});\r",
+					""
+				]
+			}
+		}
+	]
+}

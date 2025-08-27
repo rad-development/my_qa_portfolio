@@ -11,7 +11,7 @@
   - `Selenium WebDriver`
   - `Pytest`
   - Шаблона проектирования `Page Object Model (POM)`
-- 🌐 [API-тесты:](/api_testing/)
+- 🌐 [API-тесты:](/api_testing/dummyjson_testing)
   - Postman коллекции и примеры запросов
 
 ---
