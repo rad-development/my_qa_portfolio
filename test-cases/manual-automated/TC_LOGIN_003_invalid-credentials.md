@@ -8,7 +8,7 @@
 
 **Приоритет:** Средний
 
-**Связанный автотест:** [project/tests/test_failed_login.py](/project/tests/test_failed_login.py)
+**Связанный автотест:** [automated_tests/automated_E2E_tests/tests/test_failed_login.py](/automated_tests/automated_E2E_tests/tests/test_failed_login.py)
 
 ---
 
