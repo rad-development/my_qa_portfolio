@@ -33,4 +33,4 @@ pytest --html=report.html --self-contained-html
 - После выполнения команды можно открыть файл report.html в браузере и просмотреть полный отчёт.
 
 **Пример HTML-Отчета**  
-![html report](../bug_reports/screenshots/html_report.png)
+![HTML-Отчёт](html_report.png)

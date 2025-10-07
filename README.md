@@ -10,16 +10,14 @@
 - 🤖 [Автотесты](/project/README.md) (автоматизированные тесты) на **Python** с использованием:
   - `Selenium WebDriver`
   - `Pytest`
+  - `Requests`
   - Шаблона проектирования `Page Object Model (POM)`
 - 🌐 [API-тесты:](/api_testing/dummyjson_testing)
   - Postman коллекции и примеры запросов
 
-## 🧷 Автоматизированные UI-тесты
-
-### [`project/`](project/README.md)  
-Автотесты для сайта [automationexercise.com](https://automationexercise.com), реализованные с использованием Selenium, Pytest и POM.  
-🧪 **8 тестов**, охватывающих регистрацию, вход, формы, поиск и другие пользовательские сценарии.  
-📄 Подробнее: [project/README.md](project/README.md)
+## 🧷 Автоматизированные тесты
+📄 Подробнее об **E2E автотестах**: [automated_tests/automated_E2E_tests/README.md](automated_tests/automated_E2E_tests/README.md)  
+📄 Подробнее об **API автотестах**: [automated_tests/automated_API_tests/README.md](automated_tests/automated_API_tests/README.md)
 
 ## 👩‍💻 О себе
 
